@@ -57,6 +57,6 @@ This is the backend for a **Bitcoin Trading Platform** built as an **API** using
 
 - [x] Initial project setup
 - [x] JWT-based user authentication
-- [ ] OTP Verification (In Progress)
+- [x] OTP Verification (In Progress)
 - [ ] Bitcoin trading API
 - [ ] Wallet and transaction management API
