@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "orders") // Renamed to "orders"
 public class Order {
 
     @Id

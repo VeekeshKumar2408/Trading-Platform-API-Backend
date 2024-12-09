@@ -5,11 +5,13 @@ import com.tradingPlatform.model.User;
 import com.tradingPlatform.modelWallet.Withdrawal;
 import com.tradingPlatform.repositoryWallet.WithdrawalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class WithdrawalServiceImpl implements WithdrawalService {
 
     @Autowired
