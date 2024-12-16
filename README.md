@@ -1,5 +1,3 @@
-# Save the updated README content as a markdown file
-readme_content = """
 # Trading-Platform-API-Backend (In Development)
 
 This is the backend for a **Bitcoin Trading Platform** built as an **API** using **Java** and **Spring Boot**. The platform allows users to securely trade Bitcoin, manage their wallets, and view transaction history. It integrates with third-party APIs like **CoinGecko** to fetch real-time Bitcoin data and includes payment gateway integrations with **Razorpay** and **Stripe** for seamless transactions.  
