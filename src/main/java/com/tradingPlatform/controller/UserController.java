@@ -37,10 +37,10 @@ public class UserController {
     private VerificationCodeService verificationCodeService;
 
     @GetMapping("/api/user/profile")
-    public ResponseEntity<User> getUserProfile(@RequestHeader("Authorization") String jwt) throws Exception {
+    public ResponseEntity<?> getUserProfile(@RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
 
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/api/user/verification/{verificationType}/send-otp")
@@ -123,9 +123,4 @@ public class UserController {
         }
         throw new Exception("Wrong OTP");
     }
-
-
-
-
-
 }

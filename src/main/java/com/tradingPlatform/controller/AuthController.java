@@ -12,6 +12,7 @@ import com.tradingPlatform.utils.OtpUtils;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.net.http.HttpResponse;
 
 @Slf4j
 @RestController
@@ -40,13 +43,17 @@ public class AuthController {
     private EmailService emailService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<AuthResponse> register(@RequestBody User user){
+    public ResponseEntity<?> register(@RequestBody User user){
 
-        log.info("Inside register method");
+        log.info("Inside register method", this);
         try {
             User isEmailExist = userRepository.findByEmail(user.getEmail());
 
-            if (isEmailExist != null) throw new ResponseStatusException(HttpStatus.CONFLICT, "Email Already Exits, Try new Email");
+            if (isEmailExist != null){
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("message","Email Already Exists");
+                return new ResponseEntity<>(headers, HttpStatus.CONFLICT);
+            }
 
             User newUser = new User();
             newUser.setEmail(user.getEmail());

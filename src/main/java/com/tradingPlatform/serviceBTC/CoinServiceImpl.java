@@ -75,6 +75,7 @@ public class CoinServiceImpl implements CoinService{
             coin.setName(jsonNode.get("name").asText());
             coin.setSymbol(jsonNode.get("symbol").asText());
             coin.setImage(jsonNode.get("image").get("large").asText());
+            coin.setLastUpdated(jsonNode.get("last_updated").asText());
             JsonNode marketData = jsonNode.get("market_data");
 
             coin.setCurrentPrice(marketData.get("current_price").get("inr").asDouble());
@@ -83,12 +84,19 @@ public class CoinServiceImpl implements CoinService{
             coin.setTotalVolume(marketData.get("total_volume").get("inr").asLong());
             coin.setHigh24h(marketData.get("high_24h").get("inr").asDouble());
             coin.setLow24h(marketData.get("low_24h").get("inr").asDouble());
-            coin.setPriceChange24h(marketData.get("price_change2_4h").get("inr").asDouble());
-            coin.setPriceChangePercentage24h(marketData.get("price_change2_24h").get("inr").asDouble());
+            coin.setPriceChange24h(marketData.get("price_change_24h_in_currency").get("inr").asDouble());
+            coin.setPriceChangePercentage24h(marketData.get("price_change_percentage_24h_in_currency").get("inr").asDouble());
             coin.setMarketCapChange24h(marketData.get("market_cap_change_24h").asLong());
             coin.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asLong());
-            coin.setTotalSupply(marketData.get("total_supply").get("inr").asDouble());
-
+            coin.setTotalSupply(marketData.get("total_supply").asDouble());
+            coin.setCirculatingSupply(marketData.get("circulating_supply").asDouble());
+            coin.setAtl(marketData.get("atl").get("inr").asDouble());
+            coin.setAtlChangePercentage(marketData.get("atl_change_percentage").get("inr").asDouble());
+            coin.setAtlDate(marketData.get("atl_date").get("inr").asText());
+            coin.setAth(marketData.get("ath").get("inr").asDouble());
+            coin.setAthChangePercentage(marketData.get("ath_change_percentage").get("inr").asDouble());
+            coin.setAthDate(marketData.get("ath_date").get("inr").asText());
+            coin.setFullyDilutedValuation(marketData.get("fully_diluted_valuation").get("inr").asLong());
             coinRepository.save(coin);
             return response.getBody();
         } catch (HttpClientErrorException | HttpServerErrorException e){
@@ -120,7 +128,7 @@ public class CoinServiceImpl implements CoinService{
 
     @Override
     public String getTop50CoinByMarketCapRank() throws Exception {
-        String url = "https://api.coingecko.com/api/v3/coins/markets/vs_currency=inr&per_page=50&page=1";
+        String url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&per_page=50&page=1";
         RestTemplate restTemplate = new RestTemplate();
 
         try{
@@ -134,8 +142,8 @@ public class CoinServiceImpl implements CoinService{
     }
 
     @Override
-    public String getTradingCoins() throws Exception {
-        String url = "https://www.coingecko.com/api/v3/search/treading";
+    public String getTrendingCoins() throws Exception {
+        String url = "https://api.coingecko.com/api/v3/search/trending";
         RestTemplate restTemplate = new RestTemplate();
 
         try {
