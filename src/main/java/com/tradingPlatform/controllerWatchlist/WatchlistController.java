@@ -32,12 +32,12 @@ public class WatchlistController {
         return ResponseEntity.ok(watchlist);
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<Watchlist> createWatchlist(@RequestHeader("Authorization") String jwt) throws Exception {
-//        User user = userService.findUserProfileByJwt(jwt);
-//        Watchlist createdWatchlist = watchlistService.createWatchList(user);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdWatchlist);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<Watchlist> createWatchlist(@RequestHeader("Authorization") String jwt) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        Watchlist createdWatchlist = watchlistService.createWatchList(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdWatchlist);
+    }
 
     @GetMapping("/{watchlistId}")
     public ResponseEntity<Watchlist> getWatchlistById(@PathVariable Long watchlistId) throws Exception {
@@ -49,7 +49,11 @@ public class WatchlistController {
     public ResponseEntity<Coin> addItemToWatchlist(@RequestHeader("Authorization") String jwt, @PathVariable String coinId) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         Coin coin = coinService.findById(coinId);
-        Coin addedCoin = watchlistService.addItemToWatchlist(coin, user);
+        if(coin==null){
+            coinService.getCoinDetails(coinId);
+            coin = coinService.findById(coinId);
+        }
+        Coin addedCoin = watchlistService.addItemToWatchlist(coin,user);
         return ResponseEntity.ok(addedCoin);
 
     }

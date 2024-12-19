@@ -3,7 +3,9 @@ package com.tradingPlatform.serviceWatchlist;
 import com.tradingPlatform.model.User;
 import com.tradingPlatform.modelBTC.Coin;
 import com.tradingPlatform.modelWatchlist.Watchlist;
+import com.tradingPlatform.repositoryBTC.CoinRepository;
 import com.tradingPlatform.repositoryWatchlist.WatchlistRepository;
+import com.tradingPlatform.serviceBTC.CoinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,12 @@ public class WatchlistServiceImpl implements WatchlistService{
 
     @Autowired
     private WatchlistRepository watchlistRepository;
+
+    @Autowired
+    private CoinService coinService;
+
+    @Autowired
+    private CoinRepository coinRepository;
 
     @Override
     public Watchlist findUserWatchlist(Long userId) throws Exception {

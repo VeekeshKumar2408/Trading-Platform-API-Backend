@@ -8,6 +8,7 @@ import com.tradingPlatform.response.AuthResponse;
 import com.tradingPlatform.service.CustomUserDetailsService;
 import com.tradingPlatform.service.EmailService;
 import com.tradingPlatform.service.TwoFactorOtpService;
+import com.tradingPlatform.serviceWatchlist.WatchlistService;
 import com.tradingPlatform.utils.OtpUtils;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,9 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private WatchlistService watchlistService;
+
     @PostMapping("/sign-up")
     public ResponseEntity<?> register(@RequestBody User user){
 
@@ -61,7 +65,9 @@ public class AuthController {
             newUser.setFullName(user.getFullName());
             newUser.setMobile(user.getMobile());
 
-            userRepository.save(newUser);
+            User savedUser = userRepository.save(newUser);
+
+            watchlistService.createWatchList(savedUser);
 
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
