@@ -79,7 +79,7 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public PaymentResponse createRazorpayPaymentLink(User user, Long amount) throws RazorpayException {
+    public PaymentResponse createRazorpayPaymentLink(User user, Long amount, Long orderId) throws RazorpayException {
         Long Amount = amount * 100;
 
         try{
@@ -100,7 +100,7 @@ public class PaymentServiceImpl implements PaymentService{
             paymentLinkRequest.put("notify",notify);
             paymentLinkRequest.put("reminder_enable", true);
 
-            paymentLinkRequest.put("callback_url","http://localhost:5173/wallet");
+            paymentLinkRequest.put("callback_url","http://localhost:5173/wallet?order_id="+orderId);
             paymentLinkRequest.put("callback_method","get");
 
             PaymentLink payment = razorpay.paymentLink.create(paymentLinkRequest);

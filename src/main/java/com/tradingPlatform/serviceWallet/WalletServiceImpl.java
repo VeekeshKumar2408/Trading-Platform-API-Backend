@@ -79,4 +79,16 @@ public class WalletServiceImpl implements WalletService{
         walletRepository.save(wallet);
         return wallet;
     }
+
+    @Override
+    public void createWallet(User user, BigDecimal balance) {
+        try {
+            Wallet wallet = new Wallet();
+            wallet.setUser(user);
+            wallet.setBalance(balance);
+            walletRepository.save(wallet);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

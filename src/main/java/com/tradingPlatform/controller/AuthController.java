@@ -4,10 +4,12 @@ import com.tradingPlatform.config.JwtProvider;
 import com.tradingPlatform.model.TwoFactorOTP;
 import com.tradingPlatform.model.User;
 import com.tradingPlatform.repository.UserRepository;
+import com.tradingPlatform.repositoryWallet.WalletRepository;
 import com.tradingPlatform.response.AuthResponse;
 import com.tradingPlatform.service.CustomUserDetailsService;
 import com.tradingPlatform.service.EmailService;
 import com.tradingPlatform.service.TwoFactorOtpService;
+import com.tradingPlatform.serviceWallet.WalletService;
 import com.tradingPlatform.serviceWatchlist.WatchlistService;
 import com.tradingPlatform.utils.OtpUtils;
 import jakarta.mail.MessagingException;
@@ -21,9 +23,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.net.http.HttpResponse;
 
 @Slf4j
@@ -36,6 +40,9 @@ public class AuthController {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private WalletService walletService;
 
     @Autowired
     private TwoFactorOtpService twoFactorOtpService;
@@ -51,6 +58,7 @@ public class AuthController {
 
         log.info("Inside register method", this);
         try {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             User isEmailExist = userRepository.findByEmail(user.getEmail());
 
             if (isEmailExist != null){
@@ -61,14 +69,16 @@ public class AuthController {
 
             User newUser = new User();
             newUser.setEmail(user.getEmail());
-            newUser.setPassword(user.getPassword());
+            //setting the hashed password
+            String password = passwordEncoder.encode(user.getPassword());
+            newUser.setPassword(password);
             newUser.setFullName(user.getFullName());
             newUser.setMobile(user.getMobile());
 
             User savedUser = userRepository.save(newUser);
 
             watchlistService.createWatchList(savedUser);
-
+            walletService.createWallet(savedUser, BigDecimal.valueOf(0));
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     user.getEmail(),
@@ -137,10 +147,13 @@ public class AuthController {
     * This method verifies if the userName and password is correct or not
     * */
     private Authentication authenticate(String userName, String password) {
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
 
         if (userDetails == null) throw new BadCredentialsException("Invalid Username");
-        if (!password.equals(userDetails.getPassword())) throw new BadCredentialsException("Invalid Password");
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) throw new BadCredentialsException("Invalid Password");
 
         return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
     }
